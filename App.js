@@ -434,7 +434,7 @@ const Ustawienia = ({ navigation }) => {
 			// read error
 		}
 
-		///	console.log(@MyApp_USER_1);
+		////	console.log(@MyApp_USER_1);
 	};
 	const onChange = () => {};
 	return (
