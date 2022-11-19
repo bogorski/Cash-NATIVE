@@ -1,0 +1,36 @@
+{
+  "name": "awesomeproject",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.11",
+    "@react-navigation/native": "^6.0.13",
+    "@react-navigation/native-stack": "^6.9.1",
+    "expo": "47.0.6",
+    "expo-image-manipulator": "11.0.0",
+    "expo-print": "12.0.0",
+    "expo-sharing": "11.0.1",
+    "expo-status-bar": "1.4.2",
+    "prop-types": "15.8.1",
+    "react": "18.1.0",
+    "react-native": "0.70.5",
+    "react-native-canvas": "0.1.38",
+    "react-native-html-to-pdf": "0.12.0",
+    "react-native-share": "8.0.0",
+    "react-native-table-component": "1.2.2",
+    "react-native-webview": "11.23.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.20.2"
+  },
+  "private": true,
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
