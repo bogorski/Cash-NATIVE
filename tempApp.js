@@ -87,7 +87,7 @@ export default class ExampleOne extends Component {
 					<Row
 						data={state.tableHead}
 						style={styles.head}
-						textStyle={styles.text}
+						//textStyle={styles.text}
 					/>
 					<Rows data={state.tableData} />
 				</Table>

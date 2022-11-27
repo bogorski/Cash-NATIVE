@@ -10,6 +10,11 @@ import {
 	Button,
 	TouchableOpacity,
 	PixelRatio,
+	ScrollView,
+	SafeAreaView,
+	Linking,
+	Alert,
+	BackHandler,
 } from "react-native";
 import {
 	Table,
@@ -30,7 +35,7 @@ import { manipulateAsync } from "expo-image-manipulator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useLinkProps } from "@react-navigation/native";
 
 const row = "row-reverse";
 const border =
@@ -103,6 +108,7 @@ const Liczenie = ({ navigation }) => {
 			onSubmitEditing={() => nextRef.current.focus()}
 			value={value[id][1]}
 			onChangeText={(value) => onChangeValue(value, id)}
+			blurOnSubmit={false}
 		/>
 	);
 
@@ -195,7 +201,18 @@ const Liczenie = ({ navigation }) => {
 		storeData();
 		console.log(storeData);
 	};*/
-
+	const sendMail = () => {
+		const day = new Date().getDate();
+		const month = new Date().getMonth() + 1;
+		const year = new Date().getFullYear();
+		const date = day + "." + month + "." + year;
+		//name z locala
+		const name = "Mateusz Bogórski";
+		const subject = "kasa " + name + " " + date;
+		//mail opiekuna z locala
+		const adressMail = "mailto:mateusz.b@automatspec.pl?subject=" + subject;
+		Linking.openURL(adressMail);
+	};
 	const www = PixelRatio.getPixelSizeForLayoutSize(148);
 	const hhh = PixelRatio.getPixelSizeForLayoutSize(105);
 	const html = `
@@ -388,64 +405,303 @@ const Liczenie = ({ navigation }) => {
 					</body>
 					</html>
 					`;
-
+	//<Button title="Send mail" onPress={sendMail} />
 	return (
 		<View style={styles.container}>
-			<Text>Liczenie kasy</Text>
-
-			<TextInput onChangeText={onChangeName} placeholder="Imię i nazwisko" />
-			<TextInput onChangeText={onChangeSeal} placeholder="Numer plomby" />
-			<Button title="Zapisz" onPress={storeData} />
-			<Button title="Wczytaj" onPress={getMyObject} />
-			<Text>{name}</Text>
 			<View>
 				<Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
 					<Row data={tableHead} style={styles.head} />
 					<Rows data={tableData} />
 				</Table>
 			</View>
-			<Button title="Print" onPress={print} />
-			<Button
-				title="Go to Settings"
-				onPress={() => navigation.navigate("Ustawienia")}
+			<TextInput
+				style={styles.input}
+				onChangeText={onChangeSeal}
+				placeholder="Numer plomby"
 			/>
+			<View style={styles.btn}>
+				<View style={styles.styleWidth}>
+					<Button title="Print" onPress={print} />
+				</View>
+				<View style={styles.styleWidth}>
+					<Button
+						title="Go to Settings"
+						onPress={() => navigation.navigate("Ustawienia")}
+					/>
+				</View>
+			</View>
 		</View>
 	);
 };
-const styles = StyleSheet.create({
-	container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
-	head: { height: 40, backgroundColor: "#f1f8ff" },
-	text: { margin: 6 },
-	row: { flexDirection: "row", backgroundColor: "#FFF1C1" },
-	btn: { width: 58, height: 18, backgroundColor: "#78B7BB", borderRadius: 2 },
-	btnText: { textAlign: "center", color: "#fff" },
-	input: { color: "red " },
-	spacer: { textAlign: "left" },
-});
+const ElementInput = ({
+	innerRef,
+	onSubmitEditing,
+	placeholder,
+	autoFocus,
+	value,
+	onChangeText,
+	id,
+	...props
+}) => (
+	<TextInput
+		ref={innerRef}
+		placeholder={placeholder}
+		returnKeyType="next"
+		onSubmitEditing={onSubmitEditing}
+		blurOnSubmit={false}
+		autoFocus={autoFocus}
+		selectTextOnFocus
+		onChangeText={(value) => onChangeText(id, value)}
+		value={value}
+		id={id}
+		{...props}
+	/>
+);
 const Ustawienia = ({ navigation }) => {
-	const handleBack = async () => {
+	const refInput1 = useRef();
+	const refInput2 = useRef();
+	const refInput3 = useRef();
+	const refInput4 = useRef();
+	const refInput5 = useRef();
+	const refInput6 = useRef();
+	const refInput7 = useRef();
+	const refInput8 = useRef();
+	const refInput9 = useRef();
+	const refInput10 = useRef();
+	const refInput11 = useRef();
+	const refInput12 = useRef();
+	const refInput13 = useRef();
+	const refInput14 = useRef();
+	const [data, setData] = useState({
+		fullName: "",
+		street: "",
+		houseNumber: "",
+		flatNumber: "",
+		city: "",
+		postCode: "",
+		recipientName: "",
+		recipientStreet: "",
+		recipientHouseNumber: "",
+		recipientFlatNumber: "",
+		recipientCity: "",
+		recipientPostCode: "",
+		accountNumber: "",
+		transferTitle: "",
+	});
+	useEffect(() => {
+		const backAction = () => {
+			backAlert();
+			return true;
+		};
+
+		const backHandler = BackHandler.addEventListener(
+			"hardwareBackPress",
+			backAction
+		);
+
+		return () => backHandler.remove();
+	}, []);
+	useEffect(() => {
+		async function getData() {
+			try {
+				const jsonValue = await AsyncStorage.getItem("@SettingData");
+				const value = jsonValue != null ? JSON.parse(jsonValue) : null;
+				console.log(value);
+				return setData((data) => ({
+					...data,
+					...value,
+				}));
+			} catch (e) {
+				console.log(e, "error storage");
+			}
+		}
+		getData();
+	}, []);
+	const sendDataAlert = () => {
+		Alert.alert("Zapisano", "Twoje dane zostały pomyślnie zaktualizowane", [
+			{ text: "OK", onPress: () => storeData() },
+		]);
+	};
+
+	const backAlert = () => {
+		Alert.alert("Wróc", "Czy chcesz wyjść bez zapisania danych", [
+			{
+				text: "Nie",
+				onPress: () => console.log("Cancel Pressed"),
+				style: "cancel",
+			},
+			{ text: "Tak", onPress: () => navigation.goBack() },
+		]);
+	};
+
+	const storeData = async (value) => {
 		try {
-			const jsonValue = await AsyncStorage.getItem("@MyApp_USER_1");
-			//const value = jsonValue != null ? JSON.parse(jsonValue) : null;
-			console.log(jsonValue);
-			//	setName(value.name);
+			console.log(data, "data");
+			value = data;
+			console.log(value), "value";
+			const jsonValue = JSON.stringify(value);
+			console.log(jsonValue, "jsonValue");
+			await AsyncStorage.setItem("@SettingData", jsonValue);
 		} catch (e) {
 			console.log(e, "error storage");
-			// read error
 		}
-
-		////	console.log(@MyApp_USER_1);
+		console.log("Done.");
+		navigation.goBack();
 	};
 	const onChange = () => {};
+
+	const onChangeValue = (id, value) => {
+		setData((data) => ({
+			...data,
+			[id]: value,
+		}));
+		console.log(data, "data");
+	};
+
 	return (
-		<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-			<Button title="Go back" onPress={() => navigation.goBack()} />
-			<Button title="Back" onPress={handleBack} />
+		<ScrollView>
 			<View>
-				<Text>Imię i nazwisko</Text>
-				<TextInput onChangeText={onChange} value={""} />
+				<Text>DANE JEDNOSTKI ORGANIZACYJNEJ KLIENTA DOKONUJĄCEJ WPŁATY</Text>
+				<ElementInput
+					id={"fullName"}
+					value={data.fullName}
+					innerRef={refInput1}
+					placeholder={"Imię i nazwisko"}
+					autoFocus={true}
+					onSubmitEditing={() => refInput2.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"street"}
+					value={data.street}
+					innerRef={refInput2}
+					placeholder={"Ulica"}
+					onSubmitEditing={() => refInput3.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"houseNumber"}
+					value={data.houseNumber}
+					innerRef={refInput3}
+					placeholder={"Nr domu"}
+					onSubmitEditing={() => refInput4.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"flatNumber"}
+					value={data.flatNumber}
+					innerRef={refInput4}
+					placeholder={"Nr mieszkania"}
+					onSubmitEditing={() => refInput5.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"city"}
+					value={data.city}
+					innerRef={refInput5}
+					placeholder={"Miejscowość"}
+					onSubmitEditing={() => refInput6.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"postCode"}
+					value={data.postCode}
+					innerRef={refInput6}
+					placeholder={"Kod pocztowy"}
+					onSubmitEditing={() => refInput7.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
 			</View>
-		</View>
+			<View>
+				<Text>DANE BANKOWEGO DOWODU WPŁATY</Text>
+				<ElementInput
+					id={"recipientName"}
+					value={data.recipientName}
+					innerRef={refInput7}
+					placeholder={"Nazwa właściciela rachunku"}
+					onSubmitEditing={() => refInput8.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"recipientStreet"}
+					value={data.recipientStreet}
+					innerRef={refInput8}
+					placeholder={"Ulica"}
+					onSubmitEditing={() => refInput9.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"recipientHouseNumber"}
+					value={data.recipientHouseNumber}
+					innerRef={refInput9}
+					placeholder={"Nr domu"}
+					onSubmitEditing={() => refInput10.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"recipientFlatNumber"}
+					value={data.recipientFlatNumber}
+					innerRef={refInput10}
+					placeholder={"Nr lokalu"}
+					onSubmitEditing={() => refInput11.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"recipientCity"}
+					value={data.recipientCity}
+					innerRef={refInput11}
+					placeholder={"Miejscowość"}
+					onSubmitEditing={() => refInput12.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"recipientPostCode"}
+					value={data.recipientPostCode}
+					innerRef={refInput12}
+					placeholder={"Kod pocztowy"}
+					onSubmitEditing={() => refInput13.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"accountNumber"}
+					value={data.accountNumber}
+					innerRef={refInput13}
+					placeholder={"Nr rachunku bankowego"}
+					onSubmitEditing={() => refInput14.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<ElementInput
+					id={"transferTitle"}
+					value={data.transferTitle}
+					innerRef={refInput14}
+					placeholder={"Tytuł przelewu"}
+					//onSubmitEditing={() => refInput14.current.focus()}
+					onChangeText={onChangeValue}
+					style={styles.input}
+				/>
+				<View style={styles.styleLoginBtn}>
+					<View style={styles.styleWidth}>
+						<Button title="Wróć" onPress={backAlert} />
+					</View>
+					<View style={styles.styleWidth}>
+						<Button title="Zapisz" onPress={sendDataAlert} />
+					</View>
+				</View>
+			</View>
+		</ScrollView>
 	);
 };
 const Stack = createNativeStackNavigator();
@@ -465,4 +721,42 @@ export default function App() {
 		</NavigationContainer>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
+	head: { height: 40, backgroundColor: "#f1f8ff" },
+	text: { margin: 6 },
+	row: {
+		alignItems: "center",
+		justifyContent: "center",
+		paddingVertical: 12,
+		paddingHorizontal: 32,
+		borderRadius: 4,
+		elevation: 3,
+		backgroundColor: "black",
+	},
+	styleWidth: {
+		width: 150,
+	},
+	styleLoginBtn: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		marginLeft: 10,
+		marginRight: 10,
+		marginBottom: 10,
+	},
+	btn: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		margin: 12,
+	},
+	btnText: { textAlign: "center", color: "#fff" },
+	input: {
+		height: 40,
+		margin: 12,
+		borderWidth: 1,
+		padding: 10,
+	},
+	spacer: { textAlign: "left" },
+});
 //export default Home;
