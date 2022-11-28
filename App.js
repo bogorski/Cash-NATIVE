@@ -1,58 +1,22 @@
-import React, { Component, setState, useState, useEffect, useRef } from "react";
-import Canvas, { Image } from "react-native-canvas";
-import { Image as RNimage } from "react-native";
-import druk from "./image/druk.png";
-import {
-	Text,
-	TextInput,
-	StyleSheet,
-	View,
-	Button,
-	TouchableOpacity,
-	PixelRatio,
-	ScrollView,
-	SafeAreaView,
-	Linking,
-	Alert,
-	BackHandler,
-} from "react-native";
-import {
-	Table,
-	Row,
-	Rows,
-	Cell,
-	TableWrapper,
-} from "react-native-table-component";
-import * as Print from "expo-print";
-import { shareAsync } from "expo-sharing";
-import { PizzaTranslator } from "./components/myInput";
-import { element } from "prop-types";
-
-import { Asset } from "expo-asset";
-import { printAsync } from "expo-print";
-import { manipulateAsync } from "expo-image-manipulator";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer, useLinkProps } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
+import Settings from "./screens/SettingsScreen";
+import Home from "./screens/HomeScreen";
 
-const row = "row-reverse";
+/*const Liczenie = ({ navigation }) => {
+
+	const row = "row-reverse";
 const border =
 	"border: 1px solid black; border-collapse: collapse; padding-left: 5px; padding-right: 5px";
 const container = "flex: 1; margin-top: 8; background-color: aliceblue";
-
-const Liczenie = ({ navigation }) => {
 	const asset = Asset.fromModule(require("./image/druk.png"));
-	//console.log(asset.uri, "asset");
+	
 	const image = manipulateAsync(asset.localUri ?? asset.uri, [], {
 		base64: true,
 	});
-
-	//console.log(image, "image");
 	const [selectedPrinter, setSelectedPrinter] = React.useState();
 	const print = async () => {
-		// On iOS/android prints the given html. On web prints the HTML from the current page.
 		await Print.printAsync({
 			html,
 			printerUrl: selectedPrinter?.url, // iOS only
@@ -60,9 +24,7 @@ const Liczenie = ({ navigation }) => {
 	};
 
 	const printToFile = async () => {
-		// On iOS/android prints the given html. On web prints the HTML from the current page.
 		const { uri } = await Print.printToFileAsync({ html });
-		//console.log("File has been saved to:", uri);
 		await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" });
 	};
 	const refInput1 = useRef();
@@ -167,11 +129,6 @@ const Liczenie = ({ navigation }) => {
 
 	const storeData = async (value) => {
 		try {
-			//	const jsonValue = JSON.stringify(USER_1);
-			/*await AsyncStorage.setItem("@MyApp_USER_1", jsonValue);
-			console.log(jsonValue, "1");
-			const aaa = JSON.parse(jsonValue);
-			console.log(aaa.name, "2");*/
 			console.log(name);
 			const value = name;
 			await AsyncStorage.setItem("@MyApp_USER_1", value);
@@ -196,11 +153,6 @@ const Liczenie = ({ navigation }) => {
 
 		//	console.log(@MyApp_USER_1);
 	};
-	//	console.log(@MyApp_USER_1);
-	/*const handleSave = async () => {
-		storeData();
-		console.log(storeData);
-	};*/
 	const sendMail = () => {
 		const day = new Date().getDate();
 		const month = new Date().getMonth() + 1;
@@ -432,8 +384,8 @@ const Liczenie = ({ navigation }) => {
 			</View>
 		</View>
 	);
-};
-const ElementInput = ({
+};*/
+/*const ElementInput = ({
 	innerRef,
 	onSubmitEditing,
 	placeholder,
@@ -456,8 +408,8 @@ const ElementInput = ({
 		id={id}
 		{...props}
 	/>
-);
-const Ustawienia = ({ navigation }) => {
+);*/
+/*const Ustawienia = ({ navigation }) => {
 	const refInput1 = useRef();
 	const refInput2 = useRef();
 	const refInput3 = useRef();
@@ -704,12 +656,13 @@ const Ustawienia = ({ navigation }) => {
 		</ScrollView>
 	);
 };
+*/
 const Stack = createNativeStackNavigator();
 function MyStack() {
 	return (
 		<Stack.Navigator>
-			<Stack.Screen name="Liczenie" component={Liczenie} />
-			<Stack.Screen name="Ustawienia" component={Ustawienia} />
+			<Stack.Screen name="Liczenie" component={Home} />
+			<Stack.Screen name="Ustawienia" component={Settings} />
 		</Stack.Navigator>
 	);
 }
@@ -721,42 +674,3 @@ export default function App() {
 		</NavigationContainer>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
-	head: { height: 40, backgroundColor: "#f1f8ff" },
-	text: { margin: 6 },
-	row: {
-		alignItems: "center",
-		justifyContent: "center",
-		paddingVertical: 12,
-		paddingHorizontal: 32,
-		borderRadius: 4,
-		elevation: 3,
-		backgroundColor: "black",
-	},
-	styleWidth: {
-		width: 150,
-	},
-	styleLoginBtn: {
-		flexDirection: "row",
-		justifyContent: "space-around",
-		marginLeft: 10,
-		marginRight: 10,
-		marginBottom: 10,
-	},
-	btn: {
-		flexDirection: "row",
-		justifyContent: "space-around",
-		margin: 12,
-	},
-	btnText: { textAlign: "center", color: "#fff" },
-	input: {
-		height: 40,
-		margin: 12,
-		borderWidth: 1,
-		padding: 10,
-	},
-	spacer: { textAlign: "left" },
-});
-//export default Home;
